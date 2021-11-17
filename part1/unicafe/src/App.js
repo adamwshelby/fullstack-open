@@ -1,17 +1,31 @@
 import React, { useState } from 'react'
 
-const Display = ({label, count}) => <div>{label} {count}</div>
 const Button = ({text, onClick}) => <button onClick={onClick}>{text}</button>
-const Average = ({good, neutral, bad}) => <div>average {(good - bad) / (good + neutral + bad)}</div>
-const Positive = ({good, neutral, bad}) => <div>positive {(good / (good + neutral + bad)) * 100} %</div>
 
-const DisplayIfNonzero = ({good, neutral, bad, output}) => {
+const Statistics = ({good, neutral, bad}) => {
   const total = good + neutral + bad
 
   if (total === 0) {
-    return <div>Review by clicking the buttons above.</div>
+    return (
+      <div>
+        <div>good {good}</div>
+        <div>neutral {neutral}</div>
+        <div>bad {bad}</div>
+        <div>all {total}</div>
+        <div>Review by clicking the buttons above.</div>
+      </div>
+      )
   } else {
-    return output
+    return (
+      <div>
+        <div>good {good}</div>
+        <div>neutral {neutral}</div>
+        <div>bad {bad}</div>
+        <div>all {good + neutral + bad}</div>
+        <div>average {(good - bad) / (total)}</div>
+        <div>positive {(good / (total)) * 100} %</div>
+      </div>
+      )
   }
 }
 
@@ -31,14 +45,7 @@ const App = () => {
       </div>
       <h1>statistics</h1>
       <div>
-        <Display label="good" count={good}/>
-        <Display label="neutral" count={neutral}/>
-        <Display label="bad" count={bad}/>
-        <Display label="all" count={good + neutral + bad}/>
-        <DisplayIfNonzero good={good} neutral={neutral} bad={bad} 
-          output=<Average good={good} neutral={neutral} bad={bad}/>/>
-        <DisplayIfNonzero good={good} neutral={neutral} bad={bad}
-          output=<Positive good={good} neutral={neutral} bad={bad}/>/>
+        <Statistics good={good} neutral={neutral} bad={bad}/>
       </div>
     </div>
   )
