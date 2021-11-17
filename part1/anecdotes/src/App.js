@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
 const Button = ({onClick, label}) => <button onClick={onClick}>{label}</button>
+const Anecdote = ({anecdote, votes}) => <div><div>{anecdote}</div><div>has {votes} votes</div></div>
 
 const App = () => {
   const anecdotes = [
@@ -26,12 +27,30 @@ const App = () => {
     setVotes(copy)
   }
 
+  const mostVotes = () => {
+    let topCount = 0
+    let topIndex = 0
+    for (let i = 0; i < votes.length; i++) {
+      if (votes[i] > topCount) {
+        topCount = votes[i]
+        topIndex = i
+      }
+    }
+    return topIndex
+  }
+
   return (
     <div>
-      <div>{anecdotes[selected]}</div>
-      <div>has {votes[selected]} votes</div>
-      <Button onClick={handleVoteButton} label="vote"/>
-      <Button onClick={handleRandomizeButton} label="next anecdote"/>
+      <h1>Anecdote of the day</h1>
+      <div>
+        <Anecdote anecdote={anecdotes[selected]} votes={votes[selected]}/>
+        <Button onClick={handleVoteButton} label="vote"/>
+        <Button onClick={handleRandomizeButton} label="next anecdote"/>
+      </div>
+      <h1>Anecdote with most votes</h1>
+      <div>
+        <Anecdote anecdote={anecdotes[mostVotes()]} votes={votes[mostVotes()]}/>
+      </div>
     </div>
   )
 }
