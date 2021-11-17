@@ -39,6 +39,8 @@ const App = () => {
     return topIndex
   }
 
+  const topIndex = mostVotes()
+
   return (
     <div>
       <h1>Anecdote of the day</h1>
@@ -49,7 +51,7 @@ const App = () => {
       </div>
       <h1>Anecdote with most votes</h1>
       <div>
-        <Anecdote anecdote={anecdotes[mostVotes()]} votes={votes[mostVotes()]}/>
+        <Anecdote anecdote={anecdotes[topIndex]} votes={votes[topIndex]}/>
       </div>
     </div>
   )
