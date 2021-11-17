@@ -7,13 +7,7 @@ const Statistics = ({good, neutral, bad}) => {
 
   if (total === 0) {
     return (
-      <div>
-        <div>good {good}</div>
-        <div>neutral {neutral}</div>
-        <div>bad {bad}</div>
-        <div>all {total}</div>
-        <div>Review by clicking the buttons above.</div>
-      </div>
+      <div> No feedback given </div>
       )
   } else {
     return (
