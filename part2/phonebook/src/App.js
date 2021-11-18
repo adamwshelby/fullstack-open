@@ -11,9 +11,25 @@ const App = () => {
     setNewName(event.target.value)
   }
 
+  const personsEqual = (p1, p2) => {
+    return (p1.name === p2.name)
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
-    setPersons(persons.concat({name: newName}))
+    const newPerson = {name: newName}
+    let isNew = true
+    for (let x = 0; x < persons.length; x++) {
+      if (personsEqual(persons[x], newPerson)) {
+        isNew = false
+      }
+    }
+
+    if (isNew) {
+      setPersons(persons.concat({name: newName}))
+    } else {
+      window.alert(`${newName} is already a person in the phonebook`)
+    }
     document.getElementById('name').value = ""
   }
 
