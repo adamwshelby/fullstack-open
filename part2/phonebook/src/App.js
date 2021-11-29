@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from "axios"
 
 const Entries = ({ filter, persons }) => {
 
@@ -39,19 +40,19 @@ const Add = ({ addPerson, handleNameChange, handleNumberChange }) => {
 }
 
 const App = () => {
-  const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas' , number: '1234567890'},
-    { name: 'Arden Thomas', number: '09444'},
-    { name: 'Artie Gall', number: '914-907-1569'},
-    { name: 'Beatrice Bell', number: '628-13444-03'},
-    { name: 'Beatrice Bellie', number: '628-13444-032'},
-    { name: 'Beatrice Belloo', number: '628-13444-033'},
-    { name: 'Beatrice Bello3', number: '628-13444-034'}
-  ]) 
+  const [ persons, setPersons ] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
 
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
+  
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
