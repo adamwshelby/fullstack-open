@@ -9,6 +9,44 @@ const Query = ( {onChange} ) => {
   )
 }
 
+const Button = ( {text, onClick} ) => {
+  return (
+    <button onClick={onClick}>{text}</button>
+  )
+}
+
+const CountryDetail = ( {country} ) => {
+  return (
+    <div>
+      <h2>{country.name.common}</h2>
+      <div>capital {country.capital}</div>
+      <div>population {country.population}</div>
+      <h3>Languages</h3>
+      {Object.keys(country.languages).map((k) => <div key={k}>{country.languages[k]}</div>)}
+      <img src={country.flags.png} alt={country.name.common + " flag"} height="100"/>
+    </div>
+  )
+}
+
+const Country = ( {country} ) => {
+  const [showing, setShowing] = useState(false)
+  if (showing) {
+    return (
+      <div>
+        <Button text={"hide " + country.name.common} onClick={() => setShowing(!showing)}/>
+        <CountryDetail country={country}/>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        {country.name.common} <Button text="show" onClick={() => setShowing(!showing)}/>
+      </div>
+    )
+  }
+  
+}
+
 const Results = ( {countries} ) => {
   if (countries.length > 10) {
     return (
@@ -22,20 +60,11 @@ const Results = ( {countries} ) => {
       </div>)
   } else if (countries.length === 1) {
     const country = countries[0]
-    return (
-      <div>
-        <h2>{country.name.common}</h2>
-        <h3>{country.name.official}</h3>
-        <div>capital {country.capital}</div>
-        <div>population {country.population}</div>
-        <h3>Languages</h3>
-        {Object.keys(country.languages).map((k) => <div key={k}>{country.languages[k]}</div>)}
-        <img src={country.flags.png} height="100"/>
-      </div>)
+    return (<CountryDetail country={country}/>)
   } else {
     return (
       <div>
-        {countries.map((country) => <div key={country.name.official}>{country.name.common}, officially known as {country.name.official}</div>)}
+        {countries.map((country) => <Country key={country.name.common} country={country}/>)}
       </div>)
   }
 }
