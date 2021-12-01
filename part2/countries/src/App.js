@@ -30,6 +30,7 @@ const Results = ( {countries} ) => {
         <div>population {country.population}</div>
         <h3>Languages</h3>
         {Object.keys(country.languages).map((k) => <div key={k}>{country.languages[k]}</div>)}
+        <img src={country.flags.png} height="100"/>
       </div>)
   } else {
     return (
