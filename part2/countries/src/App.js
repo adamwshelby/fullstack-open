@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from "axios"
+const api_key = process.env.REACT_APP_API_KEY
 
 const Query = ( {onChange} ) => {
   return (
@@ -15,17 +16,58 @@ const Button = ( {text, onClick} ) => {
   )
 }
 
-const CountryDetail = ( {country} ) => {
+const Weather = ( {weather, capital} ) => {
   return (
     <div>
-      <h2>{country.name.common}</h2>
-      <div>capital {country.capital}</div>
-      <div>population {country.population}</div>
-      <h3>Languages</h3>
-      {Object.keys(country.languages).map((k) => <div key={k}>{country.languages[k]}</div>)}
-      <img src={country.flags.png} alt={country.name.common + " flag"} height="100"/>
+      <h3>Weather in {capital}</h3>
+      <div><strong>temperature:</strong> {parseFloat(weather.main.temp) - 273.15} Celsius</div>
+      <img src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt="weather"/>
+      <div><strong>wind:</strong>{weather.wind.speed} meters/sec from {weather.wind.deg} degrees</div>
     </div>
   )
+}
+
+const CountryDetail = ( {country} ) => {
+  const [weather, setWeather] = useState({})
+
+  const updateWeather = () => {
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${country.capital}&appid=${api_key}`)
+      .then(response => {
+        setWeather(response.data)
+      })
+      .catch(err => err)
+  }
+
+  useEffect(updateWeather
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    , [])
+
+  if (Object.keys(weather).length > 0) {
+    return (
+      <div>
+        <h2>{country.name.common}</h2>
+        <div>capital {country.capital}</div>
+        <div>population {country.population}</div>
+        <h3>Languages</h3>
+        {Object.keys(country.languages).map((k) => <div key={k}>{country.languages[k]}</div>)}
+        <img src={country.flags.png} alt={country.name.common + " flag"} height="100"/>
+        <Weather weather={weather} capital={country.capital}/>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <h2>{country.name.common}</h2>
+        <div>capital {country.capital}</div>
+        <div>population {country.population}</div>
+        <h3>Languages</h3>
+        {Object.keys(country.languages).map((k) => <div key={k}>{country.languages[k]}</div>)}
+        <img src={country.flags.png} alt={country.name.common + " flag"} height="100"/>
+        <div>Weather data not found.</div>
+      </div>
+    )
+  }
 }
 
 const Country = ( {country} ) => {
