@@ -51,11 +51,25 @@ const Add = ({ addPerson, handleNameChange, handleNumberChange }) => {
   )
 }
 
+const Notification = ({ message, isError }) => {
+  if (message === null) {
+    return null
+  } else {
+    return (
+      <div className={isError ? 'error' : 'success'}>
+        {message}
+      </div>
+    )
+  }
+}
+
 const App = () => {
   const [ persons, setPersons ] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
+  const [ message, setMessage] = useState(null)
+  const [ isError, setIsError] = useState(false)
 
   useEffect(() => {
     refresh()
@@ -70,8 +84,19 @@ const App = () => {
   }
 
   const removePerson = (person) => {
-    personService.removePerson(person.id).then(() => refresh()).catch(() => {
-      alert(`the person '${person.name}' was already deleted from server`)
+    personService.removePerson(person.id).then(() => {
+      setIsError(false)
+      setMessage(`Removed ${person.name}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000);
+      refresh()
+    }).catch(() => {
+      setIsError(true)
+      setMessage(`The person '${person.name}' was already deleted from server.`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000);
       refresh()
       })
   }
@@ -100,7 +125,11 @@ const App = () => {
         setNewNumber('')
       }
     ).catch(() => {
-      alert (`the person '${newPersonObject.name}' does not exist and cannot be updated`)
+      setIsError(true)
+      setMessage(`The person '${newPersonObject.name}' does not exist and cannot be updated.`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000);
       refresh()
     })
   }
@@ -122,8 +151,18 @@ const App = () => {
       personService.add(newPersonObject).then(() => refresh())
       document.getElementById('number').value = ""
       setNewNumber('')
+      setIsError(false)
+      setMessage(`Added ${newPersonObject.name}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000);
     } else {
       updatePerson(newPersonObject, matchedPerson)
+      setIsError(false)
+      setMessage(`Updated ${newPersonObject.name}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000);
     }
     document.getElementById('name').value = ""
     setNewName('')
@@ -134,6 +173,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={message} isError={isError} />
       <h2>Filter People</h2>
       <Filter handleFilterChange={handleFilterChange}/>
       <h2>Add People</h2>
