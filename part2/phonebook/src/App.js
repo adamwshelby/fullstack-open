@@ -71,9 +71,7 @@ const App = () => {
 
   const removePerson = (person) => {
     personService.removePerson(person.id).then(() => refresh()).catch(() => {
-      alert(
-        `the person '${person.name}' was already deleted from server`
-      )
+      alert(`the person '${person.name}' was already deleted from server`)
       refresh()
       })
   }
@@ -94,26 +92,43 @@ const App = () => {
     return (p1.name.toUpperCase() === p2.name.toUpperCase())
   }
 
+  const updatePerson = (newPersonObject, oldPersonObject) => {
+    personService.update(oldPersonObject.id, newPersonObject).then(
+      () => {
+        refresh()
+        document.getElementById('number').value = ""
+        setNewNumber('')
+      }
+    ).catch(() => {
+      alert (`the person '${newPersonObject.name}' does not exist and cannot be updated`)
+      refresh()
+    })
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
     const newPerson = {name: newName}
     let isNew = true
+    let matchedPerson = null
     for (let x = 0; x < persons.length; x++) {
       if (personsEqual(persons[x], newPerson)) {
         isNew = false
+        matchedPerson = persons[x]
       }
     }
 
+    const newPersonObject = {name: newName, number: newNumber}
     if (isNew) {
-      const newPersonObject = {name: newName, number: newNumber}
       personService.add(newPersonObject).then(() => refresh())
       document.getElementById('number').value = ""
       setNewNumber('')
     } else {
-      window.alert(`${newName} is already a person in the phonebook`)
+      updatePerson(newPersonObject, matchedPerson)
     }
     document.getElementById('name').value = ""
     setNewName('')
+    document.getElementById('number').value = ""
+    setNewNumber('')
   }
 
   return (
