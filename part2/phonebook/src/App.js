@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import personService from "./services/persons"
 
-const Entries = ({ filter, persons }) => {
+const Button = ({ onClick, label }) => {
+  return (
+    <button onClick={() => onClick()}>{label}</button>
+  )
+}
+
+const Person = (props) => {
+  return (
+    <div key={props.p.name}>{props.p.name} {props.p.number} <Button onClick={() => props.removePerson(props.p)} label="remove"/></div>
+  )
+}
+
+const Entries = ({ removePerson, filter, persons }) => {
 
   const isPrefix = (p, s) => {
     if (p.length <= s.length) {
@@ -13,10 +25,10 @@ const Entries = ({ filter, persons }) => {
 
   if (filter.length === 0) {
     return (
-      <div>{persons.map((p) => <div key={p.name}>{p.name} {p.number}</div>)}</div>
+      <div>{persons.map((p) => <Person key={p.name} p={p} removePerson={removePerson}/>)}</div>
     )} else {
     return(
-      <div>{persons.map((p) => isPrefix(filter, p.name) ? <div key={p.name}>{p.name} {p.number}</div> : <div key={p.name}></div>)}</div>
+      <div>{persons.map((p) => isPrefix(filter, p.name) ? <Person key={p.name} p={p} removePerson={removePerson}/> : <div key={p.name}></div>)}</div>
       )
   }
 }
@@ -46,11 +58,25 @@ const App = () => {
   const [ filter, setFilter ] = useState('')
 
   useEffect(() => {
-    personService.getAll()
-      .then(allPersons => 
-      setPersons(allPersons)
-    )
+    refresh()
   }, [])
+
+  const refresh = () => {
+    personService.getAll()
+      .then(allPersons => {
+      setPersons(allPersons)
+      }
+    )
+  }
+
+  const removePerson = (person) => {
+    personService.removePerson(person.id).then(() => refresh()).catch(() => {
+      alert(
+        `the person '${person.name}' was already deleted from server`
+      )
+      refresh()
+      })
+  }
   
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -80,8 +106,7 @@ const App = () => {
 
     if (isNew) {
       const newPersonObject = {name: newName, number: newNumber}
-      personService.add(newPersonObject)
-      setPersons(persons.concat({name: newName, number: newNumber}))
+      personService.add(newPersonObject).then(() => refresh())
       document.getElementById('number').value = ""
       setNewNumber('')
     } else {
@@ -102,7 +127,7 @@ const App = () => {
         handleNameChange={handleNameChange} 
         handleNumberChange={handleNumberChange}/>
       <h2>Entries</h2>
-      <Entries filter={filter} persons={persons}/>
+      <Entries removePerson={removePerson} filter={filter} persons={persons}/>
     </div>
   )
 }
