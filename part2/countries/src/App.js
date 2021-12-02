@@ -41,7 +41,7 @@ const CountryDetail = ( {country} ) => {
 
   useEffect(updateWeather
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    , [])
+  , [])
 
   if (Object.keys(weather).length > 0) {
     return (
